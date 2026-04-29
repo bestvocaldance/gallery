@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>베스트보컬&댄스 - 수업 영상</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg-deep: #050505; --bg-card: rgba(255,255,255,0.04); --bg-card-hover: rgba(255,255,255,0.08);
+    --gold: #F4C430; --gold-soft: rgba(244,196,48,0.15);
+    --text-primary: #fff; --text-secondary: rgba(255,255,255,0.65); --text-muted: rgba(255,255,255,0.4);
+    --border: rgba(255,255,255,0.08); --border-gold: rgba(244,196,48,0.3);
+    --shadow-gold: 0 8px 32px rgba(244,196,48,0.15);
+    --danger: #ff5c5c; --danger-soft: rgba(255,92,92,0.15); --danger-border: rgba(255,92,92,0.4);
+    --success: #50c878; --success-soft: rgba(80,200,120,0.15);
+  }
+  html, body { background: var(--bg-deep); color: var(--text-primary); font-family: 'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body { background: radial-gradient(ellipse at top, rgba(244,196,48,0.08) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(244,196,48,0.04) 0%, transparent 50%), var(--bg-deep); background-attachment: fixed; }
+
+  .loader { position: fixed; inset: 0; background: var(--bg-deep); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease; }
+  .loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .loader-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(244,196,48,0.25) 0%, transparent 70%); border-radius: 50%; animation: pulseAnim 3s ease-in-out infinite; }
+  @keyframes pulseAnim { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 1; } }
+  .loader-text { text-align: center; opacity: 0; animation: textIn 1s 0.3s ease forwards; position: relative; z-index: 1; }
+  @keyframes textIn { to { opacity: 1; } }
+  .loader-brand { font-family: 'Bebas Neue',sans-serif; font-size: 32px; letter-spacing: 8px; color: var(--gold); margin-bottom: 8px; }
+  .loader-sub { font-size: 13px; color: var(--text-muted); letter-spacing: 3px; }
+  .loader-bar { margin-top: 40px; width: 200px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; opacity: 0; animation: textIn 1s 0.6s ease forwards; position: relative; z-index: 1; }
+  .loader-bar::after { content: ''; display: block; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: slide 1.5s ease-in-out infinite; }
+  @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+
+  .pw-screen { position: fixed; inset: 0; background: var(--bg-deep); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9000; padding: 24px; }
+  .pw-screen.show { display: flex; }
+  .pw-box { width: 100%; max-width: 360px; text-align: center; }
+  .pw-logo-area { margin-bottom: 28px; }
+  .pw-brand { font-family: 'Bebas Neue',sans-serif; font-size: 28px; letter-spacing: 6px; color: var(--gold); margin-bottom: 6px; }
+  .pw-brand-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 3px; }
+  .pw-icon { width: 64px; height: 64px; margin: 0 auto 20px; background: var(--gold-soft); border: 1px solid var(--border-gold); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: var(--gold); }
+  .pw-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .pw-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+  .pw-input { width: 100%; padding: 16px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); font-size: 16px; font-family: inherit; text-align: center; letter-spacing: 4px; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .pw-input:focus { border-color: var(--gold); background: var(--bg-card-hover); }
+  .pw-btn { width: 100%; margin-top: 14px; padding: 16px; background: linear-gradient(135deg, var(--gold) 0%, #d4a418 100%); color: #000; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; }
+  .pw-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(244,196,48,0.3); }
+  .pw-btn:active { transform: translateY(0); }
+  .pw-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .pw-error { margin-top: 12px; font-size: 12px; color: #ff6b6b; min-height: 16px; }
+
+  .header { position: sticky; top: 0; z-index: 100; background: rgba(5,5,5,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
+  .header-text { flex: 1; min-width: 0; }
+  .header-title { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+  .header-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; margin-top: 2px; font-family: 'Bebas Neue',sans-serif; }
+  .header-back { width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: none; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: background 0.2s, transform 0.15s; flex-shrink: 0; }
+  .header-back.show { display: flex; }
+  .header-back:hover { background: var(--bg-card-hover); }
+  .header-back:active { transform: scale(0.95); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 100px; }
+  .page-title { font-family: 'Bebas Neue',sans-serif; font-size: 36px; letter-spacing: 3px; margin-bottom: 6px; background: linear-gradient(135deg, #fff 0%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; letter-spacing: 0.3px; }
+  .section-label { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
+  .section-label::before { content: ''; width: 3px; height: 16px; background: var(--gold); border-radius: 2px; }
+  .section-label-text { font-size: 12px; font-weight: 600; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 4px 0; }
+  .month-nav-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+  .month-nav-btn:hover:not(:disabled) { background: var(--bg-card-hover); border-color: var(--border-gold); color: var(--gold); }
+  .month-nav-btn:active:not(:disabled) { transform: scale(0.94); }
+  .month-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .month-title { font-family: 'Bebas Neue',sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--text-primary); }
+  .calendar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .day-cell { position: relative; aspect-ratio: 1 / 1.1; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 16px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s; padding: 16px; overflow: hidden; }
+  .day-cell::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0; transition: opacity 0.3s; }
+  .day-cell:hover { background: var(--bg-card-hover); border-color: var(--gold); transform: translateY(-3px); }
+  .day-cell:hover::before { opacity: 1; }
+  .day-cell:active { transform: translateY(0); }
+  .day-cell-num { font-family: 'Bebas Neue',sans-serif; font-size: 56px; color: var(--gold); letter-spacing: -1.5px; line-height: 1; }
+  .day-cell-weekday { display: inline-block; font-size: 10px; font-weight: 600; color: var(--text-primary); background: var(--gold-soft); border: 1px solid var(--border-gold); padding: 2px 8px; border-radius: 100px; letter-spacing: 0.5px; margin-top: 4px; }
+  .day-cell-count { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); }
+  .day-cell-count-num { color: var(--text-primary); font-weight: 600; }
+
+  .class-list { display: flex; flex-direction: column; gap: 12px; }
+  .class-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s; display: flex; align-items: center; gap: 16px; }
+  .class-card:hover { background: var(--bg-card-hover); border-color: var(--border-gold); }
+  .class-card:active { transform: scale(0.99); }
+  .class-time { flex-shrink: 0; width: 56px; text-align: center; }
+  .class-time-h { font-family: 'Bebas Neue',sans-serif; font-size: 28px; color: var(--gold); line-height: 1; }
+  .class-time-m { font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.5px; }
+  .class-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+  .class-info { flex: 1; min-width: 0; }
+  .class-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .class-meta { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .class-meta-badge { display: inline-flex; align-items: center; gap: 4px; color: var(--gold); font-weight: 600; }
+  .class-arrow { color: var(--text-muted); flex-shrink: 0; transition: transform 0.2s, color 0.2s; }
+  .class-card:hover .class-arrow { color: var(--gold); transform: translateX(3px); }
+
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .video-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
+  .video-card:hover { border-color: var(--border-gold); transform: translateY(-2px); }
+  .video-thumb { position: relative; width: 100%; aspect-ratio: 16 / 10; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); overflow: hidden; cursor: pointer; }
+  .video-thumb-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(244,196,48,0.4); }
+  .video-play { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .video-thumb:hover .video-play { background: rgba(0,0,0,0.4); }
+  .video-play-icon { width: 48px; height: 48px; background: rgba(244,196,48,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 4px 16px rgba(0,0,0,0.4); transition: transform 0.2s; }
+  .video-thumb:hover .video-play-icon { transform: scale(1.1); }
+  .video-info { padding: 12px 14px; }
+  .video-name { font-size: 13px; font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .video-bottom { margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .video-size { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+  .video-download-btn { padding: 7px 12px; background: var(--gold-soft); border: 1px solid var(--border-gold); border-radius: 8px; color: var(--gold); font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: background 0.2s, transform 0.15s; font-family: inherit; }
+  .video-download-btn:hover:not(:disabled) { background: var(--gold); color: #000; }
+  .video-download-btn:active:not(:disabled) { transform: scale(0.95); }
+  .video-download-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.25s; }
+  .modal.show { display: flex; opacity: 1; }
+  .modal-content { width: 100%; max-width: 900px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transform: scale(0.95); transition: transform 0.25s; max-height: 95vh; display: flex; flex-direction: column; }
+  .modal.show .modal-content { transform: scale(1); }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .modal-title { flex: 1; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .modal-close { width: 32px; height: 32px; background: var(--bg-card); border: none; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .modal-close:hover { background: var(--bg-card-hover); }
+  .modal-video { width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  .modal-video iframe { width: 100%; height: 100%; border: 0; }
+  .modal-actions { padding: 16px 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .modal-btn { flex: 1; padding: 13px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); border-radius: 12px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s, border-color 0.2s; }
+  .modal-btn:hover { background: var(--bg-card-hover); border-color: var(--border-gold); }
+  .modal-btn.primary { background: linear-gradient(135deg, var(--gold) 0%, #d4a418 100%); color: #000; border-color: transparent; }
+  .modal-btn.primary:hover { box-shadow: var(--shadow-gold); }
+  .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+  .dl-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1500; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .dl-modal.show { display: flex; }
+  .dl-content { width: 100%; max-width: 380px; background: #0a0a0a; border: 1px solid var(--border-gold); border-radius: 18px; padding: 28px 24px; text-align: center; }
+  .dl-icon { width: 64px; height: 64px; margin: 0 auto 16px; background: var(--gold-soft); border: 1px solid var(--border-gold); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: var(--gold); }
+  .dl-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dl-status { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; min-height: 16px; }
+  .dl-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+  .dl-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #d4a418); width: 0%; transition: width 0.3s ease; }
+  .dl-percent { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); letter-spacing: 1px; margin-bottom: 18px; }
+  .dl-cancel { padding: 11px 24px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; }
+  .dl-cancel:hover { background: var(--bg-card-hover); }
+
+  .empty { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+  .empty-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; display: flex; align-items: center; justify-content: center; color: var(--gold); }
+  .empty-title { font-size: 16px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+  .empty-sub { font-size: 13px; color: var(--text-muted); }
+  .empty-actions { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .empty-btn { padding: 12px 22px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); border-radius: 12px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+  .empty-btn:hover { background: var(--bg-card-hover); border-color: var(--border-gold); }
+  .empty-btn:active { transform: scale(0.97); }
+  .empty-btn.primary { background: linear-gradient(135deg, var(--gold) 0%, #d4a418 100%); color: #000; border-color: transparent; }
+  .empty-btn.primary:hover { box-shadow: var(--shadow-gold); }
+
+  .view { display: none; animation: fadeIn 0.4s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px 16px 100px; }
+    .page-title { font-size: 30px; }
+    .calendar-grid { gap: 10px; }
+    .day-cell { padding: 12px; }
+    .day-cell-num { font-size: 44px; }
+    .month-title { font-size: 22px; letter-spacing: 1.5px; }
+    .month-nav-btn { width: 36px; height: 36px; }
+    .video-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .video-info { padding: 10px 12px; }
+    .video-name { font-size: 12px; }
+    .video-download-btn { padding: 6px 10px; font-size: 10px; }
+    .modal { padding: 0; }
+    .modal-content { border-radius: 0; max-width: 100%; height: 100%; max-height: 100%; }
+    .modal-video { flex: 1; aspect-ratio: auto; }
+  }
+
+  .footer { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 11px; letter-spacing: 2px; font-family: 'Bebas Neue',sans-serif; }
+  .footer-divider { width: 40px; height: 1px; background: var(--border); margin: 0 auto 16px; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(244,196,48,0.3); }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px); background: rgba(20,20,20,0.95); border: 1px solid var(--border-gold); color: var(--text-primary); padding: 14px 24px; border-radius: 12px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 2000; opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; pointer-events: none; max-width: 90vw; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.error { border-color: var(--danger-border); color: #ffaaaa; }
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-glow"></div>
+  <div class="loader-text">
+    <div class="loader-brand">BEST VOCAL &amp; DANCE</div>
+    <div class="loader-sub">CLASS VIDEO ARCHIVE</div>
+  </div>
+  <div class="loader-bar"></div>
+</div>
+
+<div class="pw-screen" id="pwScreen">
+  <div class="pw-box">
+    <div class="pw-logo-area">
+      <div class="pw-brand">BEST VOCAL &amp; DANCE</div>
+      <div class="pw-brand-sub">CLASS VIDEO ARCHIVE</div>
+    </div>
+    <div class="pw-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="pw-title">비밀번호 입력</div>
+    <div class="pw-sub">학원에서 안내받은<br>비밀번호를 입력해주세요</div>
+    <input class="pw-input" id="pwInput" type="password" placeholder="••••" autocomplete="off" inputmode="numeric">
+    <button class="pw-btn" id="pwBtn">입장하기</button>
+    <div class="pw-error" id="pwError"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+  <header class="header">
+    <button class="header-back" id="backBtn" aria-label="뒤로">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="header-text">
+      <div class="header-title">
+        <span>베스트보컬&amp;댄스</span>
+      </div>
+      <div class="header-sub">CLASS VIDEO</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="view active" id="viewDates">
+      <div class="page-title">DANCE ARCHIVE</div>
+      <div class="page-sub">날짜를 선택해 수업 영상을 확인하세요</div>
+      <div id="datesContent"></div>
+    </div>
+    <div class="view" id="viewClasses">
+      <div class="page-title" id="classesTitle">CLASSES</div>
+      <div class="page-sub" id="classesSub">수업을 선택하세요</div>
+      <div class="section-label"><span class="section-label-text">SCHEDULE</span></div>
+      <div id="classesContent"></div>
+    </div>
+    <div class="view" id="viewVideos">
+      <div class="page-title" id="videosTitle">VIDEOS</div>
+      <div class="page-sub" id="videosSub">영상을 재생하거나 다운로드하세요</div>
+      <div class="section-label"><span class="section-label-text">RECORDED</span></div>
+      <div id="videosContent"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-divider"></div>
+    BEST VOCAL &amp; DANCE STUDIO
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">영상 제목</div>
+      <button class="modal-close" id="modalClose" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-video" id="modalVideo"></div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="modalDownload" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        다운로드
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="dl-modal" id="dlModal">
+  <div class="dl-content">
+    <div class="dl-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </div>
+    <div class="dl-title" id="dlTitle">다운로드 중...</div>
+    <div class="dl-status" id="dlStatus">준비 중</div>
+    <div class="dl-percent" id="dlPercent">0%</div>
+    <div class="dl-bar"><div class="dl-bar-fill" id="dlBarFill"></div></div>
+    <button class="dl-cancel" id="dlCancel" type="button">취소</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 설정 - GitHub Pages용 GAS API URL
+// ============================================================
+var API_URL = 'https://script.google.com/macros/s/AKfycbyLCr9Y2d3rPA2IBkhiK6Wjurlxy_-WiOP3_hjDdNy7vDD17D5aPmwQlTx36lLhd-pl/exec';
+
+var STATE = { history: [], dateFolders: [], loaderStartTime: Date.now(), role: null, authPw: null, currentMonth: null, foldersByMonth: {} };
+var MIN_LOADER_TIME = 1500;
+var DL_STATE = { cancelled: false, active: false };
+
+// ============================================================
+// API 호출 헬퍼 (google.script.run 대신 fetch 사용)
+// ============================================================
+function callApi(action, params) {
+  var body = Object.assign({ action: action, pw: STATE.authPw || '' }, params || {});
+  return fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  }).then(function(res) {
+    return res.json();
+  });
+}
+
+// ============================================================
+// 초기화
+// ============================================================
+function initApp() {
+  showPasswordScreen();
+}
+
+function showPasswordScreen() {
+  var elapsed = Date.now() - STATE.loaderStartTime;
+  var delay = Math.max(0, MIN_LOADER_TIME - elapsed);
+  setTimeout(function() {
+    hideLoader();
+    document.getElementById('pwScreen').classList.add('show');
+    setTimeout(function() {
+      try { document.getElementById('pwInput').focus(); } catch (e) {}
+    }, 100);
+  }, delay);
+}
+
+function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
+
+function enterApp() {
+  hideLoader();
+  document.getElementById('pwScreen').classList.remove('show');
+  document.getElementById('app').style.display = 'block';
+  loadDates();
+}
+
+// ============================================================
+// 비밀번호
+// ============================================================
+document.getElementById('pwBtn').addEventListener('click', submitPassword);
+document.getElementById('pwInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitPassword();
+});
+
+function submitPassword() {
+  var pw = document.getElementById('pwInput').value;
+  var errEl = document.getElementById('pwError');
+  var btn = document.getElementById('pwBtn');
+  errEl.textContent = '';
+  if (!pw) { errEl.textContent = '비밀번호를 입력해주세요'; return; }
+  btn.disabled = true;
+  btn.textContent = '확인 중...';
+  
+  // 비번을 임시로 STATE에 넣고 로그인 시도
+  STATE.authPw = pw;
+  
+  callApi('login', {})
+    .then(function(res) {
+      btn.disabled = false;
+      btn.textContent = '입장하기';
+      if (res && res.ok) {
+        STATE.role = res.role;
+        enterApp();
+      } else {
+        STATE.authPw = null;
+        errEl.textContent = '비밀번호가 일치하지 않습니다';
+        document.getElementById('pwInput').value = '';
+        try { document.getElementById('pwInput').focus(); } catch (e) {}
+      }
+    })
+    .catch(function(err) {
+      STATE.authPw = null;
+      btn.disabled = false;
+      btn.textContent = '입장하기';
+      errEl.textContent = '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      console.error(err);
+    });
+}
+
+// ============================================================
+// 뒤로가기 / 뷰 전환
+// ============================================================
+document.getElementById('backBtn').addEventListener('click', goBack);
+
+function goBack() {
+  if (STATE.history.length <= 1) return;
+  STATE.history.pop();
+  var prev = STATE.history[STATE.history.length - 1];
+  if (prev === 'dates') showView('viewDates');
+  else if (prev.indexOf('classes:') === 0) showView('viewClasses');
+  updateBackBtn();
+}
+
+function updateBackBtn() {
+  var btn = document.getElementById('backBtn');
+  if (STATE.history.length > 1) btn.classList.add('show');
+  else btn.classList.remove('show');
+}
+
+function showView(id) {
+  var views = document.querySelectorAll('.view');
+  for (var i = 0; i < views.length; i++) views[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// 날짜
+// ============================================================
+function loadDates() {
+  STATE.history = ['dates'];
+  updateBackBtn();
+  var content = document.getElementById('datesContent');
+  content.innerHTML = renderLoading('영상 목록을 불러오는 중');
+  
+  callApi('getDates', {})
+    .then(function(res) {
+      if (!res || !res.ok) { content.innerHTML = renderError(res ? res.error : '오류'); return; }
+      STATE.dateFolders = res.folders;
+      renderDates(res.folders);
+    })
+    .catch(function(err) { content.innerHTML = renderError(err.message || String(err)); });
+}
+
+function renderDates(folders) {
+  var content = document.getElementById('datesContent');
+  if (!folders || folders.length === 0) {
+    content.innerHTML = renderEmpty('아직 등록된 영상이 없어요', '곧 새로운 수업 영상이 올라올 예정이에요');
+    return;
+  }
+  var byMonth = {};
+  for (var i = 0; i < folders.length; i++) {
+    var p = parseDateName(folders[i].name);
+    if (!p.ymKey) continue;
+    if (!byMonth[p.ymKey]) byMonth[p.ymKey] = [];
+    byMonth[p.ymKey].push(folders[i]);
+  }
+  STATE.foldersByMonth = byMonth;
+  var months = Object.keys(byMonth).sort();
+  if (months.length === 0) {
+    content.innerHTML = renderEmpty('아직 등록된 영상이 없어요', '곧 새로운 수업 영상이 올라올 예정이에요');
+    return;
+  }
+  if (!STATE.currentMonth || months.indexOf(STATE.currentMonth) === -1) {
+    STATE.currentMonth = months[months.length - 1];
+  }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  var content = document.getElementById('datesContent');
+  var ymKey = STATE.currentMonth;
+  var year = parseInt(ymKey.substring(0, 4), 10);
+  var month = parseInt(ymKey.substring(5, 7), 10);
+
+  var folders = (STATE.foldersByMonth[ymKey] || []).slice();
+  folders.sort(function(a, b) {
+    var pa = parseDateName(a.name).dayNum;
+    var pb = parseDateName(b.name).dayNum;
+    return pb - pa;
+  });
+
+  var months = Object.keys(STATE.foldersByMonth).sort();
+  var idx = months.indexOf(ymKey);
+  var hasPrev = idx > 0;
+  var hasNext = idx < months.length - 1;
+
+  var html = '';
+
+  html += '<div class="month-nav">';
+  html += '<button class="month-nav-btn" id="prevMonthBtn"' + (hasPrev ? '' : ' disabled') + '>';
+  html += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  html += '</button>';
+  html += '<div class="month-title">' + year + '. ' + (month < 10 ? '0' + month : month) + '</div>';
+  html += '<button class="month-nav-btn" id="nextMonthBtn"' + (hasNext ? '' : ' disabled') + '>';
+  html += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  html += '</button>';
+  html += '</div>';
+
+  if (folders.length === 0) {
+    html += renderEmpty('이 달엔 영상이 없어요', '다른 달을 선택해보세요');
+  } else {
+    html += '<div class="calendar-grid">';
+    for (var i = 0; i < folders.length; i++) {
+      var folder = folders[i];
+      var p = parseDateName(folder.name);
+      html += '<div class="day-cell" data-id="' + esc(folder.id) + '" data-name="' + esc(folder.name) + '">';
+      html += '<div>';
+      html += '<div class="day-cell-num">' + p.dayNum + '</div>';
+      html += '<div class="day-cell-weekday">' + esc(p.weekday) + '</div>';
+      html += '</div>';
+      html += '<div class="day-cell-count">';
+      html += '<span class="day-cell-count-num">' + folder.classCount + '</span><span>개 수업</span>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+
+  var prevBtn = document.getElementById('prevMonthBtn');
+  var nextBtn = document.getElementById('nextMonthBtn');
+  if (prevBtn && hasPrev) {
+    prevBtn.addEventListener('click', function() {
+      STATE.currentMonth = months[idx - 1];
+      renderCalendar();
+    });
+  }
+  if (nextBtn && hasNext) {
+    nextBtn.addEventListener('click', function() {
+      STATE.currentMonth = months[idx + 1];
+      renderCalendar();
+    });
+  }
+
+  var cells = content.querySelectorAll('.day-cell');
+  for (var c = 0; c < cells.length; c++) {
+    (function(cell) {
+      cell.addEventListener('click', function() {
+        loadClasses(cell.getAttribute('data-id'), cell.getAttribute('data-name'));
+      });
+    })(cells[c]);
+  }
+}
+
+function parseDateName(name) {
+  var m = name.match(/(\d{4})[.\-_\/](\d{1,2})[.\-_\/](\d{1,2})/);
+  if (!m) return { day: '', ym: '', weekday: '', dayNum: 0, ymKey: '', year: 0, month: 0 };
+  var y = parseInt(m[1], 10), mo = parseInt(m[2], 10), d = parseInt(m[3], 10);
+  var date = new Date(y, mo - 1, d);
+  var weekdays = ['일','월','화','수','목','금','토'];
+  var wm = name.match(/\(([일월화수목금토])\)/);
+  var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+  return {
+    day: pad(d),
+    ym: y + '. ' + pad(mo),
+    weekday: wm ? wm[1] + '요일' : weekdays[date.getDay()] + '요일',
+    dayNum: d,
+    ymKey: y + '-' + pad(mo),
+    year: y,
+    month: mo
+  };
+}
+
+// ============================================================
+// 수업
+// ============================================================
+function loadClasses(folderId, folderName) {
+  STATE.history.push('classes:' + folderId);
+  updateBackBtn();
+  showView('viewClasses');
+  document.getElementById('classesTitle').textContent = formatTitle(folderName);
+  document.getElementById('classesSub').textContent = '수업을 선택해 영상을 확인하세요';
+  document.getElementById('classesContent').innerHTML = renderLoading('수업 목록을 불러오는 중');
+  
+  callApi('getClasses', { dateId: folderId })
+    .then(function(res) {
+      if (!res || !res.ok) { document.getElementById('classesContent').innerHTML = renderError(res ? res.error : '오류'); return; }
+      renderClasses(res.classes);
+    })
+    .catch(function(err) { document.getElementById('classesContent').innerHTML = renderError(err.message || String(err)); });
+}
+
+function renderClasses(classes) {
+  var content = document.getElementById('classesContent');
+  if (!classes || classes.length === 0) { content.innerHTML = renderEmpty('이 날짜에는 영상이 없어요', ''); return; }
+  var html = '<div class="class-list">';
+  for (var i = 0; i < classes.length; i++) html += renderClassCard(classes[i]);
+  html += '</div>';
+  content.innerHTML = html;
+  var cards = content.querySelectorAll('.class-card');
+  for (var j = 0; j < cards.length; j++) {
+    (function(card) {
+      card.addEventListener('click', function() {
+        loadVideos(card.getAttribute('data-id'), card.getAttribute('data-name'));
+      });
+    })(cards[j]);
+  }
+}
+
+function renderClassCard(cls) {
+  var parsed = parseClassName(cls.name);
+  var html = '<div class="class-card" data-id="' + esc(cls.id) + '" data-name="' + esc(cls.name) + '">';
+  html += '<div class="class-time"><div class="class-time-h">' + esc(parsed.hour) + '</div><div class="class-time-m">' + esc(parsed.minute) + '</div></div>';
+  html += '<div class="class-divider"></div>';
+  html += '<div class="class-info"><div class="class-name">' + esc(parsed.title) + '</div>';
+  html += '<div class="class-meta"><span class="class-meta-badge">';
+  html += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
+  html += '영상 ' + cls.videoCount + '개</span>';
+  if (parsed.teacher) html += '<span>·</span><span>' + esc(parsed.teacher) + '</span>';
+  html += '</div></div>';
+  html += '<svg class="class-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  html += '</div>';
+  return html;
+}
+
+function parseClassName(name) {
+  var hour = '', minute = '', rest = name;
+  var m = name.match(/^(\d{1,2}):(\d{2})\s*(.*)/);
+  if (m) {
+    hour = m[1].length === 1 ? '0' + m[1] : m[1];
+    minute = m[2];
+    rest = m[3];
+  } else {
+    var m2 = name.match(/^(\d{1,2})\s+(.*)/);
+    if (m2) { hour = m2[1].length === 1 ? '0' + m2[1] : m2[1]; minute = '00'; rest = m2[2]; }
+  }
+  var teacher = '', title = rest;
+  var tm = rest.match(/(.*?)\s+([가-힣]{2,4})T\s*$/);
+  if (tm) { title = tm[1]; teacher = tm[2] + 'T'; }
+  return { hour: hour || '--', minute: minute || '--', title: title || name, teacher: teacher };
+}
+
+// ============================================================
+// 영상
+// ============================================================
+function loadVideos(folderId, folderName) {
+  STATE.history.push('videos:' + folderId);
+  updateBackBtn();
+  showView('viewVideos');
+  document.getElementById('videosTitle').textContent = formatTitle(folderName);
+  document.getElementById('videosSub').textContent = '영상을 재생하거나 다운로드하세요';
+  document.getElementById('videosContent').innerHTML = renderLoading('영상을 불러오는 중');
+  
+  callApi('getVideos', { classKey: folderId })
+    .then(function(res) {
+      if (!res || !res.ok) { document.getElementById('videosContent').innerHTML = renderError(res ? res.error : '오류'); return; }
+      renderVideos(res.videos);
+    })
+    .catch(function(err) { document.getElementById('videosContent').innerHTML = renderError(err.message || String(err)); });
+}
+
+function renderVideos(videos) {
+  var content = document.getElementById('videosContent');
+  if (!videos || videos.length === 0) { content.innerHTML = renderEmpty('영상이 없어요', '곧 업로드될 예정이에요'); return; }
+  var html = '<div class="video-grid">';
+  for (var i = 0; i < videos.length; i++) html += renderVideoCard(videos[i]);
+  html += '</div>';
+  content.innerHTML = html;
+  var cards = content.querySelectorAll('.video-card');
+  for (var j = 0; j < cards.length; j++) {
+    (function(card, video) {
+      var thumb = card.querySelector('.video-thumb');
+      if (thumb) thumb.addEventListener('click', function() { openModal(video); });
+      var dlBtn = card.querySelector('.video-download-btn');
+      if (dlBtn) {
+        dlBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          startDownload(video);
+        });
+      }
+    })(cards[j], videos[j]);
+  }
+}
+
+function renderVideoCard(video) {
+  var html = '<div class="video-card" data-token="' + esc(video.token) + '">';
+  html += '<div class="video-thumb">';
+  html += '<div class="video-thumb-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>';
+  html += '<div class="video-play"><div class="video-play-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>';
+  html += '</div>';
+  html += '<div class="video-info">';
+  html += '<div class="video-name">' + esc(video.name) + '</div>';
+  html += '<div class="video-bottom">';
+  html += '<div class="video-size">' + esc(video.size) + '</div>';
+  html += '<button class="video-download-btn" type="button">';
+  html += '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  html += '저장</button>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+// ============================================================
+// 영상 모달 (재생)
+// ============================================================
+function openModal(video) {
+  document.getElementById('modalTitle').textContent = video.name;
+  document.getElementById('modalVideo').innerHTML = renderLoading('영상 준비 중');
+  document.getElementById('modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  callApi('getPreviewUrl', { token: video.token })
+    .then(function(res) {
+      if (!res || !res.ok) {
+        document.getElementById('modalVideo').innerHTML = renderError(res ? res.error : '재생 준비 실패');
+        return;
+      }
+      document.getElementById('modalVideo').innerHTML = '<iframe src="' + esc(res.previewUrl) + '" allow="autoplay" allowfullscreen></iframe>';
+    })
+    .catch(function(err) {
+      document.getElementById('modalVideo').innerHTML = renderError(err.message || '재생 준비 실패');
+    });
+  
+  var dlBtn = document.getElementById('modalDownload');
+  dlBtn.onclick = function() {
+    closeModal();
+    setTimeout(function() { startDownload(video); }, 200);
+  };
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modalVideo').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', function(e) { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); } });
+
+// ============================================================
+// 다운로드 (Bunny CDN 직링크)
+// ============================================================
+function startDownload(video) {
+  if (DL_STATE.active) { showToast('다른 다운로드가 진행 중입니다', true); return; }
+  DL_STATE.active = true;
+  DL_STATE.cancelled = false;
+  
+  document.getElementById('dlTitle').textContent = video.name;
+  document.getElementById('dlStatus').textContent = '준비 중...';
+  document.getElementById('dlPercent').textContent = '0%';
+  document.getElementById('dlBarFill').style.width = '0%';
+  document.getElementById('dlModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  callApi('getVideoInfo', { token: video.token })
+    .then(function(info) {
+      if (!info || !info.ok) {
+        finishDownload(false, info ? info.error : '영상 정보 조회 실패');
+        return;
+      }
+      downloadFromDirectUrl(info.downloadUrl, info.fileName, info.sizeBytes, info.mimeType);
+    })
+    .catch(function(err) {
+      finishDownload(false, err.message || '오류');
+    });
+}
+
+function downloadFromDirectUrl(directUrl, fileName, totalSize, mimeType) {
+  document.getElementById('dlStatus').textContent = '다운로드 중...';
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', directUrl, true);
+  xhr.responseType = 'blob';
+  
+  xhr.onprogress = function(e) {
+    if (DL_STATE.cancelled) {
+      xhr.abort();
+      return;
+    }
+    if (e.lengthComputable) {
+      var percent = Math.floor((e.loaded / e.total) * 100);
+      document.getElementById('dlPercent').textContent = percent + '%';
+      document.getElementById('dlBarFill').style.width = percent + '%';
+      document.getElementById('dlStatus').textContent = '다운로드 중... (' + formatMB(e.loaded) + ' / ' + formatMB(e.total) + ')';
+    } else {
+      document.getElementById('dlStatus').textContent = '다운로드 중... (' + formatMB(e.loaded) + ')';
+    }
+  };
+  
+  xhr.onload = function() {
+    if (DL_STATE.cancelled) {
+      finishDownload(false, '취소됨');
+      return;
+    }
+    if (xhr.status >= 200 && xhr.status < 300) {
+      saveBlob(xhr.response, fileName, mimeType);
+    } else {
+      finishDownload(false, '서버 오류 (' + xhr.status + ')');
+    }
+  };
+  
+  xhr.onerror = function() {
+    finishDownload(false, '네트워크 오류');
+  };
+  
+  xhr.onabort = function() {
+    finishDownload(false, '취소됨');
+  };
+  
+  xhr.send();
+}
+
+function saveBlob(blob, fileName, mimeType) {
+  document.getElementById('dlStatus').textContent = '파일 저장 중...';
+  
+  try {
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    if (isIOS && navigator.canShare) {
+      var file = new File([blob], fileName, { type: mimeType || 'video/mp4' });
+      if (navigator.canShare({ files: [file] })) {
+        document.getElementById('dlStatus').textContent = '공유 시트 여는 중...';
+        navigator.share({ files: [file], title: fileName })
+          .then(function() {
+            finishDownload(true, null, fileName);
+          })
+          .catch(function(err) {
+            if (err && err.name === 'AbortError') {
+              finishDownload(false, '저장 취소됨');
+            } else {
+              fallbackDownload(blob, fileName);
+            }
+          });
+        return;
+      }
+    }
+    
+    fallbackDownload(blob, fileName);
+  } catch (e) {
+    finishDownload(false, '파일 저장 실패: ' + e.message);
+  }
+}
+
+function fallbackDownload(blob, fileName) {
+  try {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+    finishDownload(true, null, fileName);
+  } catch (e) {
+    finishDownload(false, '저장 실패: ' + e.message);
+  }
+}
+
+function finishDownload(success, error, fileName) {
+  DL_STATE.active = false;
+  DL_STATE.cancelled = false;
+  
+  if (success) {
+    document.getElementById('dlStatus').textContent = '✅ 완료!';
+    document.getElementById('dlPercent').textContent = '100%';
+    document.getElementById('dlBarFill').style.width = '100%';
+    showToast('"' + (fileName || '영상') + '" 저장 완료');
+    setTimeout(function() {
+      document.getElementById('dlModal').classList.remove('show');
+      document.body.style.overflow = '';
+    }, 1200);
+  } else {
+    document.getElementById('dlStatus').textContent = '❌ ' + (error || '실패');
+    showToast(error || '다운로드 실패', true);
+    setTimeout(function() {
+      document.getElementById('dlModal').classList.remove('show');
+      document.body.style.overflow = '';
+    }, 2500);
+  }
+}
+
+document.getElementById('dlCancel').addEventListener('click', function() {
+  DL_STATE.cancelled = true;
+});
+
+function formatMB(bytes) {
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+}
+
+// ============================================================
+// 토스트
+// ============================================================
+var _toastTimer = null;
+function showToast(message, isError) {
+  var toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show' + (isError ? ' error' : '');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { toast.className = 'toast' + (isError ? ' error' : ''); }, 3000);
+}
+
+// ============================================================
+// 헬퍼
+// ============================================================
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatTitle(name) {
+  if (!name) return '';
+  if (name.length > 30) return name.substring(0, 30) + '...';
+  return name;
+}
+
+function renderLoading(text) {
+  return '<div class="empty"><div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><div class="empty-title">' + esc(text) + '</div></div>';
+}
+
+function renderEmpty(title, sub) {
+  return '<div class="empty"><div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div><div class="empty-title">' + esc(title) + '</div>' + (sub ? '<div class="empty-sub">' + esc(sub) + '</div>' : '') + '</div>';
+}
+
+function renderError(msg) {
+  return '<div class="empty"><div class="empty-icon" style="color:#ff6b6b;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-title">불러오기 실패</div><div class="empty-sub">' + esc(msg) + '</div><div class="empty-actions"><button class="empty-btn primary" onclick="retryCurrent()">다시 시도</button><button class="empty-btn" onclick="goHome()">처음으로</button></div></div>';
+}
+
+function retryCurrent() {
+  var activeView = document.querySelector('.view.active');
+  if (!activeView) { loadDates(); return; }
+  if (activeView.id === 'viewDates') {
+    loadDates();
+  } else if (activeView.id === 'viewClasses') {
+    var lastClass = null;
+    for (var i = STATE.history.length - 1; i >= 0; i--) {
+      if (STATE.history[i].indexOf('classes:') === 0) {
+        lastClass = STATE.history[i].substring('classes:'.length);
+        break;
+      }
+    }
+    if (lastClass) {
+      STATE.history.pop();
+      loadClasses(lastClass, document.getElementById('classesTitle').textContent);
+    } else {
+      loadDates();
+    }
+  } else if (activeView.id === 'viewVideos') {
+    var lastVideo = null;
+    for (var j = STATE.history.length - 1; j >= 0; j--) {
+      if (STATE.history[j].indexOf('videos:') === 0) {
+        lastVideo = STATE.history[j].substring('videos:'.length);
+        break;
+      }
+    }
+    if (lastVideo) {
+      STATE.history.pop();
+      loadVideos(lastVideo, document.getElementById('videosTitle').textContent);
+    } else {
+      loadDates();
+    }
+  } else {
+    loadDates();
+  }
+}
+
+function goHome() {
+  STATE.history = [];
+  showView('viewDates');
+  loadDates();
+}
+
+initApp();
+</script>
+</body>
+</html>
