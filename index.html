@@ -465,7 +465,7 @@ function renderCalendar() {
   folders.sort(function(a, b) {
     var pa = parseDateName(a.name).dayNum;
     var pb = parseDateName(b.name).dayNum;
-    return pa - pb
+    return pa - pb;
   });
 
   var months = Object.keys(STATE.foldersByMonth).sort();
