@@ -79,7 +79,7 @@
   .day-cell:hover::before { opacity: 1; }
   .day-cell:active { transform: translateY(0); }
   .day-cell-num { font-family: 'Bebas Neue',sans-serif; font-size: 56px; color: var(--gold); letter-spacing: -1.5px; line-height: 1; }
-  .day-cell-weekday { display: inline-block; font-size: 10px; font-weight: 600; color: var(--text-primary); background: var(--gold-soft); border: 1px solid var(--border-gold); padding: 2px 8px; border-radius: 100px; letter-spacing: 0.5px; margin-top: 4px; }
+  .day-cell-weekday { display: inline-block; font-size: 13px; font-weight: 700; color: var(--gold); background: var(--gold-soft); border: 1px solid var(--border-gold); padding: 4px 10px; border-radius: 100px; letter-spacing: 1px; margin-top: 6px; }
   .day-cell-count { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); }
   .day-cell-count-num { color: var(--text-primary); font-weight: 600; }
 
@@ -167,6 +167,9 @@
     .calendar-grid { gap: 10px; }
     .day-cell { padding: 12px; }
     .day-cell-num { font-size: 44px; }
+   .day-cell-num { font-size: 44px; }
+.day-cell-weekday { font-size: 12px; padding: 3px 9px; }   ← 이 줄 추가
+.month-title { font-size: 22px; letter-spacing: 1.5px; }
     .month-title { font-size: 22px; letter-spacing: 1.5px; }
     .month-nav-btn { width: 36px; height: 36px; }
     .video-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
